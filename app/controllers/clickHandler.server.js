@@ -6,7 +6,7 @@ function ClickHandler () {
 
 	this.getClicks = function (req, res) {
 		Users
-			.findOne({ 'github.id': req.user.github.id }, { '_id': false })
+			.findOne({ 'authId': req.user.authId }, { '_id': false })
 			.exec(function (err, result) {
 				if (err) { throw err; }
 
@@ -16,7 +16,7 @@ function ClickHandler () {
 
 	this.addClick = function (req, res) {
 		Users
-			.findOneAndUpdate({ 'github.id': req.user.github.id }, { $inc: { 'nbrClicks.clicks': 1 } })
+			.findOneAndUpdate({ 'authId': req.user.authId }, { $inc: { 'nbrClicks.clicks': 1 } })
 			.exec(function (err, result) {
 					if (err) { throw err; }
 
@@ -27,7 +27,7 @@ function ClickHandler () {
 
 	this.resetClicks = function (req, res) {
 		Users
-			.findOneAndUpdate({ 'github.id': req.user.github.id }, { 'nbrClicks.clicks': 0 })
+			.findOneAndUpdate({ 'authId': req.user.AuthId }, { 'nbrClicks.clicks': 0 })
 			.exec(function (err, result) {
 					if (err) { throw err; }
 
