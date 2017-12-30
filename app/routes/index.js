@@ -2,6 +2,7 @@
 
 var path = process.cwd();
 var ClickHandler = require(path + '/app/controllers/clickHandler.server.js');
+const PollController = require(path + '/app/controllers/pollController.server.js')
 
 module.exports = function (app, passport) {
 
@@ -14,6 +15,7 @@ module.exports = function (app, passport) {
 	}
 
 	var clickHandler = new ClickHandler();
+	const pollController = new PollController();
 
 	app.route('/')
 		.get(isLoggedIn, function (req, res) {
@@ -63,4 +65,8 @@ module.exports = function (app, passport) {
 		.get(isLoggedIn, clickHandler.getClicks)
 		.post(isLoggedIn, clickHandler.addClick)
 		.delete(isLoggedIn, clickHandler.resetClicks);
+	
+	app.route('/polls')
+		.post(isLoggedIn, pollController.addPoll)
+		.get(isLoggedIn, pollController.getPolls)
 };
