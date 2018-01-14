@@ -2,4 +2,16 @@ extends layout
 
 block content
   h1= title
-  p Welcome to #{title}
+  p Welcome to the #[em FCC Voting App]
+  
+  h1 Dynamic content
+  
+  if error
+    p Error getting content
+  else
+    p The following records are available:
+    
+    ul
+      li #[strong Polls:] !{data.poll_count}
+      li #[strong Users:] !{data.user_count}
+      li #[strong Options:] !{data.option_count}

@@ -1,7 +1,24 @@
 const Poll = require('../models/poll')
+const User = require('../models/user')
+const Option = require('../models/option')
+
+const async = require('async')
 
 exports.index = function(req, res) {
-    res.send('NOT IMPLEMENTED: Site Home Page')
+    async.parallel({
+        poll_count: (callback) => {
+            Poll.count(callback)
+        },
+        user_count: (callback) => {
+            User.count(callback)
+        },
+        option_count: (callback) => {
+            Option.count(callback)
+        }
+        
+    }, (err, results) => {
+        res.render('index', { title: 'FCC Poll App Home', error: err, data: results })
+    })
 }
 
 exports.poll_list = function(req, res) {
