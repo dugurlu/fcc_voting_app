@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+		
+		<link href="/public/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+		
+		<title>FCC Voting App</title>
+	</head>
+
+	<body>
+		<nav class="navbar navbar-expand-lg navbar-light bg-light">
+			<a class="navbar-brand" href="#"><span id="display-name"></span></a>
+			<button
+				class="navbar-toggler"
+				type="button"
+				data-toggle="collapse"
+				data-target="#navbarSupportedContent"
+				aria-controls="navbarSupportedContent"
+				aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+			
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav mr-auto">
+					<li class="nav-item">
+						<a class="nav-link" href="#">Home<span class="sr-only"> (current)</span></a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/profile">Profile</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="/logout">Logout</a>
+					</li>
+				</ul>
+			</div>
+		</nav>
+		<div class="container-fluid">
+			<div class="row">
+				<div class="col">
+					<button type="button" class="btn btn-secondary btn-add-poll">Add poll</button>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col">
+					<table class="table">
+						<thead>
+							<tr>
+								<th scope="col">Title</th>
+								<th scope="col">Author</th>
+								<th scope="col">Description</th>
+							</tr>
+						</thead>
+						<tbody id="polls">
+							
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</div>
+		
+		<script type="text/javascript" src="common/ajax-functions.js"></script>
+		<script type="text/javascript" src="common/jquery.min.js"></script>
+		<script type="text/javascript" src="common/popper.min.js"></script>
+		<script type="text/javascript" src="common/bootstrap.min.js"></script>
+		<script type="text/javascript" src="controllers/userController.client.js"></script>
+		<script type="text/javascript" src="controllers/pollController.client.js"></script>
+	</body>
+
+</html>

@@ -1,8 +1,6 @@
 const Poll = require('../models/poll')
 const User = require('../models/user')
 const Option = require('../models/option')
-const { body, validationResult } = require('express-validator/check')
-const { sanitizeBody } = require('express-validator/filter')
 
 const async = require('async')
 
@@ -37,51 +35,13 @@ exports.poll_detail = function(req, res) {
     res.send('NOT IMPLEMENTED: Poll detail: ' + req.params.id)
 }
 
-exports.poll_create_get = function(req, res, next) {
-    Option.find((err, options) => {
-        if(err) return next(err)
-        res.render('poll_form', { title: 'Create Poll', options: options })
-    })
+exports.poll_create_get = function(req, res) {
+    res.send('NOT IMPLEMENTED: Poll create GET')
 }
 
-exports.poll_create_post = [
-    (req, res, next) => {
-        if(!(req.body.options instanceof Array)) {
-            if(typeof req.body.options === 'undefined') req.body.options = []
-            else req.body.options = new Array(req.body.options)
-        }
-        next()
-    },
-    body('title', 'Title must not be empty').isLength({ min: 1 }).trim(),
-    sanitizeBody('*').trim().escape(),
-    (req, res, next) => {
-        const errors = validationResult(req)
-        
-        let poll = new Poll({
-            title: req.body.title,
-            description: req.body.description,
-            options: req.body.options
-        })
-        
-        if(!errors.isEmpty()) {
-            Option.find((err, options) => {
-                if(err) return next(err)
-                for(let i=0; i<options.length; i++) {
-                    if(poll.options.indexOf(options[i]._id) > -1) {
-                        options[i].checked = 'true'
-                    }
-                }
-                res.render('poll_form', { title: 'Create Poll', options: options, poll: poll, errors: errors.array() })
-            })
-            return
-        } else {
-            poll.save((err) => {
-                if(err) return next(err)
-                res.redirect(poll.url)
-            })
-        }
-    }
-]
+exports.poll_create_post = function(req, res) {
+    res.send('NOT IMPLEMENTED: Poll create POST')
+}
 
 exports.poll_delete_get = function(req, res) {
     res.send('NOT IMPLEMENTED: Poll delete GET')
