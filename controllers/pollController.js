@@ -33,8 +33,32 @@ exports.poll_list = function(req, res, next) {
         })
 }
 
-exports.poll_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: Poll detail: ' + req.params.id)
+exports.poll_detail = function(req, res, next) {
+    console.log('getting poll details')
+    let options = []
+    Poll.findById(req.params.id)
+    .populate('Option')
+    .exec((err, poll) => {
+        if(err) { return next(err) }
+        if(poll == null) {
+            let err = new Error('Poll not found')
+            err.status = 404
+            return next(err)
+        }
+        console.log('retrieving options')
+        async.each(poll.options, (optionId, callback) => {
+            Option.findById(optionId)
+            .exec((err, option) => {
+                if(err) { callback(err) }
+                options.push(option)
+                callback()
+            })
+        }, err => {
+            if(err) { return next(err) }
+            poll.options = options
+            res.render('poll_detail', { title: 'Poll ' + poll.title, poll: poll })
+        })
+    })
 }
 
 exports.poll_create_get = function(req, res, next) {

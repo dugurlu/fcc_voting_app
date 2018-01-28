@@ -1,0 +1,15 @@
+extends layout
+
+block content
+    h1= title
+    
+    div(style='margin-left: 20px; margin-top: 20px')
+    
+        h4 Options
+        
+        ul
+        each option in poll.options
+            li
+                a(href=option.url) #{option.name} (#{option.votes} votes)
+        else
+            p This poll has no options
