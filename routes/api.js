@@ -5,8 +5,16 @@ const option_controller = require('../controllers/optionController')
 const poll_controller = require('../controllers/pollController')
 const user_controller = require('../controllers/userController')
 
-/// POLL ROUTES ///
+// Prevent acces to all requests while not authenticated
+function isLoggedIn(req, res, next) {
+  return req.isAuthenticated() ? next() : res.redirect('/login')
+}
+router.all('*', isLoggedIn)
 
+
+/*
+ * POLL ROUTES
+ */
 // GET Home Page
 router.get('/', poll_controller.index)
 
@@ -34,7 +42,9 @@ router.get('/polls/:id', poll_controller.poll_detail)
 // GET Polls
 router.get('/polls', poll_controller.poll_list)
 
-/// USER ROUTES ///
+/*
+ *  USER ROUTES
+ */
 
 // GET User create
 router.get('/users/create', user_controller.user_create_get)

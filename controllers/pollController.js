@@ -19,7 +19,7 @@ exports.index = function(req, res) {
         }
         
     }, (err, results) => {
-        res.render('index', { title: 'FCC Poll App Home', error: err, data: results })
+        res.render('index', { title: 'FCC Poll App Home', error: err, data: results, user: req.user })
     })
 }
 
@@ -29,12 +29,11 @@ exports.poll_list = function(req, res, next) {
             if (err) {
                 return next(err)
             }
-            res.render('poll_list', {title: 'Poll List', poll_list: list_polls})
+            res.render('poll_list', { title: 'Poll List', poll_list: list_polls, user: req.user })
         })
 }
 
 exports.poll_detail = function(req, res, next) {
-    console.log('getting poll details')
     let options = []
     Poll.findById(req.params.id)
     .populate('Option')
@@ -45,7 +44,6 @@ exports.poll_detail = function(req, res, next) {
             err.status = 404
             return next(err)
         }
-        console.log('retrieving options')
         async.each(poll.options, (optionId, callback) => {
             Option.findById(optionId)
             .exec((err, option) => {
@@ -56,7 +54,7 @@ exports.poll_detail = function(req, res, next) {
         }, err => {
             if(err) { return next(err) }
             poll.options = options
-            res.render('poll_detail', { title: 'Poll ' + poll.title, poll: poll })
+            res.render('poll_detail', { title: 'Poll ' + poll.title, poll: poll, user: req.user })
         })
     })
 }
@@ -64,15 +62,15 @@ exports.poll_detail = function(req, res, next) {
 exports.poll_create_get = function(req, res, next) {
     Option.find((err, options) => {
         if(err) return next(err)
-        res.render('poll_form', { title: 'Create Poll', options: options })
+        res.render('poll_form', { title: 'Create Poll', options: options, user: req.user })
     })
 }
 
 exports.poll_create_post = [
     (req, res, next) => {
-        if(!(req.body.options instanceof Array)) {
-            if(typeof req.body.options === 'undefined') req.body.options = []
-            else req.body.options = new Array(req.body.options)
+        if(!(req.body.option instanceof Array)) {
+            if(typeof req.body.option === 'undefined') req.body.option = []
+            else req.body.option = new Array(req.body.option)
         }
         next()
     },
@@ -84,7 +82,7 @@ exports.poll_create_post = [
         let poll = new Poll({
             title: req.body.title,
             description: req.body.description,
-            options: req.body.options
+            options: req.body.option
         })
         
         if(!errors.isEmpty()) {
@@ -95,13 +93,26 @@ exports.poll_create_post = [
                         options[i].checked = 'true'
                     }
                 }
-                res.render('poll_form', { title: 'Create Poll', options: options, poll: poll, errors: errors.array() })
+                res.render('poll_form', { title: 'Create Poll', options: options, poll: poll, errors: errors.array(), user: req.user })
             })
             return
         } else {
+            // save poll and add to user's polls list
             poll.save((err) => {
                 if(err) return next(err)
                 res.redirect(poll.url)
+            })
+            
+            User.findById(req.user._id)
+            .populate('Poll')
+            .exec((err, user) => {
+                if(err) return next(err)
+                if(user) {
+                    user.polls.push(poll)
+                    user.save((err) => {
+                        if(err) return next(err)
+                    })
+                }
             })
         }
     }
