@@ -1,22 +1,24 @@
-var express = require('express');
-var path = require('path');
-var favicon = require('serve-favicon');
-var logger = require('morgan');
-var bodyParser = require('body-parser');
-var passport = require('passport')
+const express = require('express');
+const path = require('path');
+const favicon = require('serve-favicon');
+const logger = require('morgan');
+const bodyParser = require('body-parser');
+const passport = require('passport')
 
 const session = require('express-session')
 const MongoStore = require('connect-mongo')(session)
 
-var index = require('./routes/index');
-var users = require('./routes/users');
+const index = require('./routes/index');
+const users = require('./routes/users');
 const api = require('./routes/api')
 
-var app = express();
+require('dotenv').config()
+
+const app = express();
 
 // set up mongoose connection
 const mongoose = require('mongoose')
-const mongoDb = 'mongodb://localhost/poll-app'
+const mongoDb = process.env.MONGO_URI
 mongoose.connect(mongoDb, {
   useMongoClient: true
 })
@@ -42,11 +44,12 @@ app.use(session({
 }))
 
 // passport authentication middleware
+require('./config/passport')(passport)
 app.use(passport.initialize())
 app.use(passport.session())
 
 
-app.use('/', index);
+app.use('/', index(passport));
 app.use('/users', users);
 app.use('/api', api)
 
