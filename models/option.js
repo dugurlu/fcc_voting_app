@@ -8,7 +8,7 @@ const OptionSchema = new Schema({
 
 OptionSchema
 .virtual('url')
-.get(() => {
+.get(function() {
     return '/api/options/' + this._id
 })
 

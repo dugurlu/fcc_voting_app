@@ -86,5 +86,4 @@ router.get('/options/:id', option_controller.option_detail)
 // GET Options
 router.get('/options', option_controller.option_list)
 
-
 module.exports = router

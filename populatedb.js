@@ -29,9 +29,10 @@ const users = []
 const polls = []
 const options = []
 
-function userCreate(username, displayname, authid, cb) {
+function userCreate(username, displayname, authid, polls, cb) {
     let userData = {userName: username, authId: authid}
     if(displayname != false) userData.displayName = displayname
+    if(polls != false) userData.polls = polls
     
     let user = new User(userData)
     
@@ -60,8 +61,8 @@ function optionCreate(name, votes, cb) {
     })
 }
 
-function pollCreate(title, description, author, options, cb) {
-    let pollData = {title: title, author: author}
+function pollCreate(title, description, options, cb) {
+    let pollData = {title: title}
     if(description != false) pollData.description = description
     if(options != false) pollData.options = options
     
@@ -77,11 +78,8 @@ function pollCreate(title, description, author, options, cb) {
     })
 }
 
-function createOptionUsers(cb) {
+function createOptions(cb) {
     async.parallel([
-        (callback) => {userCreate('deniz', 'doublesoul', '1337', callback)},
-        (callback) => {userCreate('foobar', false, '42', callback)},
-        (callback) => {userCreate('anon', false, '0', callback)},
         (callback) => {optionCreate('option1', 0, callback)},
         (callback) => {optionCreate('option2', 0, callback)},
         (callback) => {optionCreate('yes', 0, callback)},
@@ -92,15 +90,27 @@ function createOptionUsers(cb) {
 
 function createPolls(cb) {
     async.parallel([
-        (callback) => {pollCreate('Test Poll 1', false, users[0], [options[0], options[1]], callback)},
-        (callback) => {pollCreate('Test Poll 2', 'whatever', users[2], [options[2], options[3]], callback)}
+        (callback) => {pollCreate('Test Poll 1', false, [options[0], options[1]], callback)},
+        (callback) => {pollCreate('Test Poll 2', 'whatever', [options[2], options[3]], callback)},
+        (callback) => {pollCreate('Test Poll 3', 'newone', [options[2], options[3]], callback)},
+        (callback) => {pollCreate('Test Poll 4', false, [options[0], options[1]], callback)}
+    ],
+    cb)
+}
+
+function createUsers(cb) {
+    async.parallel([
+        (callback) => {userCreate('deniz', 'doublesoul', '1337', [polls[0], polls[1], polls[2]], callback)},
+        (callback) => {userCreate('foobar', false, '42', [polls[3]], callback)},
+        (callback) => {userCreate('anon', false, '0', [], callback)},
     ],
     cb)
 }
 
 async.series([
-    createOptionUsers,
-    createPolls
+    createOptions,
+    createPolls,
+    createUsers
 ],
 (err, results) => {
     if(err) {

@@ -1,0 +1,14 @@
+extends layout
+
+block content
+    h1= title
+    ul
+    each user in user_list
+        if user.displayName
+            li
+                a(href=user.url) #{user.displayName} (#{user.userName}): #{user.polls.length} polls
+        else
+            li
+                a(href=user.url) #{user.userName}: #{user.polls.length} polls
+    else
+        li There are no users

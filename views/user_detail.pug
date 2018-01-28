@@ -1,0 +1,16 @@
+extends layout
+
+block content
+    h1= title
+    
+    div(style='margin-left: 20px; margin-top: 20px')
+    
+        h4 Polls
+        
+        dl
+        each poll in user.polls
+            dt
+                a(href=poll.url) #{poll.title}
+            dd #{poll.description}
+        else
+            p This user has no polls

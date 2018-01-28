@@ -1,0 +1,10 @@
+extends layout
+
+block content
+    h1= title
+    ul
+    each option in option_list
+        li
+            a(href=option.url) #{option.name}
+    else
+        li There are no options

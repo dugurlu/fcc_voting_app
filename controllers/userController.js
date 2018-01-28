@@ -1,11 +1,43 @@
 const User = require('../models/user')
+const Poll = require('../models/poll')
+const async = require('async')
 
-exports.user_list = function(req, res) {
-    res.send('NOT IMPLEMENTED: User list')
+exports.user_list = function(req, res, next) {
+    User.find()
+    .populate('Poll')
+    .sort([['displayName', 'ascending']])
+    .exec((err, users) => {
+        if (err) { return next(err) }
+        res.render('user_list', {title: 'Registered Users', user_list: users})
+    })
 }
 
-exports.user_detail = function(req, res) {
-    res.send('NOT IMPLEMENTED: User detail: ' + req.params.id)
+exports.user_detail = function(req, res, next) {
+    let polls = []
+    User.findById(req.params.id)
+    .populate('Poll')
+    .exec(function(err, user) {
+        if(err) { return next(err) }
+        if(user == null) {
+            let err = new Error('User not found')
+            err.status = 404
+            return next(err)
+        }
+        
+        
+        async.each(user.polls, (pollId, callback) => {
+            Poll.findById(pollId)
+                .exec((err, poll) => {
+                    if(err) { callback(err) }
+                    polls.push(poll)
+                    callback()
+                })
+        }, err => {
+            if(err) { return next(err) }
+            user.polls = polls
+            res.render('user_detail', {title: 'User ' + user.name, user: user})
+        })
+    })
 }
 
 exports.user_create_get = function(req, res) {

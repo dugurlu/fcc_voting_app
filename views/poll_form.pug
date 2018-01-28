@@ -1,0 +1,26 @@
+extends layout
+
+block content
+  h1= title
+  
+  form(method='POST' action='')
+    div.form-group
+      label(for='title') Title:
+      input#title.form-control(type='text' placeholder='Name of poll' name='title' required='true' value=(undefined===poll ? '' : poll.title) )
+    div.form-group
+      label(for='description')
+      input#description.form-control(type='textarea' placeholder='Description' name='description' value=(undefined===poll ? '' : poll.description) )
+      
+    div.form-group
+      label Options:
+      div
+        for option in options
+          div(style='display: inline; padding-right: 10px;')
+            input.checkbox-input(type='checkbox' name='option' id=option._id value=option._id checked=option.checked)
+            label(for=option._id) #{option.name}
+    button.btn.btn-primary(type='submit') Submit
+    
+  if errors
+    ul
+      for error in errors
+        li!= error.msg
