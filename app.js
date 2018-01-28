@@ -2,8 +2,11 @@ var express = require('express');
 var path = require('path');
 var favicon = require('serve-favicon');
 var logger = require('morgan');
-var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
+var passport = require('passport')
+
+const session = require('express-session')
+const MongoStore = require('connect-mongo')(session)
 
 var index = require('./routes/index');
 var users = require('./routes/users');
@@ -30,8 +33,18 @@ app.set('view engine', 'pug');
 app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
-app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+app.use(session({
+  secret: 'fcc poll app session secret',
+  store: new MongoStore({ mongooseConnection: db, touchAfter: 24 * 3600 }),
+  resave: false,
+  saveUninitialized: false
+}))
+
+// passport authentication middleware
+app.use(passport.initialize())
+app.use(passport.session())
+
 
 app.use('/', index);
 app.use('/users', users);
